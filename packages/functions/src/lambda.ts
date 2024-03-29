@@ -46,7 +46,7 @@ export async function main(event: APIGatewayProxyEvent) {
     try {
         await dynamoDb.put(params);
 
-    const notify = await sqs
+        const notify = await sqs
             .sendMessage({
                 QueueUrl: Queue.Queue.queueUrl,
                 MessageBody: JSON.stringify({
@@ -54,32 +54,19 @@ export async function main(event: APIGatewayProxyEvent) {
                     order_ref: data.order_ref,
                 }),
             })
-            .promise()
-            .then(() => {
-               return sqs.sendMessage({
-                    QueueUrl: Queue.Queue.queueUrl,
-                    MessageBody: JSON.stringify({
-                        billing: "pending",
-                        order_ref: data.order_ref,
-                    }),
-                })
-                .promise()
-                .then(() => {
-                    console.log("Both order_notification and billing messages sent");
-                }) 
-            });
-
-    } catch (error) {
-        let message;
-        if (error instanceof Error) {
-            message = error.message;
-        } else {
-            message = String(error);
-        }
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: message }),
-        };
+            .promise();
+console.log("looks like message was sent")
+} catch (error) {
+    let message;
+    if (error instanceof Error) {
+        message = error.message;
+    } else {
+        message = String(error);
     }
+    return {
+        statusCode: 500,
+        body: JSON.stringify({ error: message }),
+    };
+}
 }
 
