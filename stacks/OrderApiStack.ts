@@ -1,13 +1,17 @@
 import { StackContext, Queue, Api, use } from "sst/constructs";
 import { StorageStack } from "./StorageStack";
 
+
+
 export function OrderApiStack({ stack }: StackContext) {
 
   const { table } = use(StorageStack);
 
-  const queue = new Queue(stack, "Queue", {
+   const queue = new Queue(stack, "Queue", {
     consumer: "packages/functions/src/consumer.main",
   });
+
+  queue.bind([table]);
 
 const api = new Api(stack, "Api", {
   defaults: {

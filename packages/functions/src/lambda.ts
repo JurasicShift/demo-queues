@@ -1,13 +1,10 @@
 import AWS from "aws-sdk";
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { Queue } from "sst/node/queue";
 import { Table } from "sst/node/table";
-import { createdAt } from "helpers/helpers";
+import { createdAt, messageObjFactory } from "helpers/helpers";
 import dynamoDb from "../../core/src/dynamodb";
 
 const sqs = new AWS.SQS();
-
-// const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 export async function main(event: APIGatewayProxyEvent) {
     let data = {
@@ -44,29 +41,28 @@ export async function main(event: APIGatewayProxyEvent) {
     }
 
     try {
-        await dynamoDb.put(params);
+        const dataBase = await dynamoDb.put(params);
 
         const notify = await sqs
-            .sendMessage({
-                QueueUrl: Queue.Queue.queueUrl,
-                MessageBody: JSON.stringify({
-                    order_notification: "pending",
-                    order_ref: data.order_ref,
-                }),
-            })
-            .promise();
-console.log("looks like message was sent")
-} catch (error) {
-    let message;
-    if (error instanceof Error) {
-        message = error.message;
-    } else {
-        message = String(error);
+            .sendMessage(messageObjFactory("order_notification", "pending", data))
+            .promise().then(() => {
+                sqs.sendMessage(messageObjFactory("order_billing", "pending", data)).promise()
+            }).then();
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ order: true }),
+        };
+    } catch (error) {
+        let message;
+        if (error instanceof Error) {
+            message = error.message;
+        } else {
+            message = String(error);
+        }
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: message }),
+        };
     }
-    return {
-        statusCode: 500,
-        body: JSON.stringify({ error: message }),
-    };
-}
 }
 
