@@ -2,7 +2,7 @@ export interface MessageType {
     type: string,
     status: string,
     order_ref: string,
-    order_item: string
+    order_item: number
 }
 
 

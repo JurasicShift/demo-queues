@@ -1,5 +1,5 @@
 import {  DynamoDBDocType } from "../types";
-import { Queue } from "sst/node/queue";
+// import { Queue } from "sst/node/queue";
 
 export const createdAt = (): string => {
     const timestamp = Date.now();
@@ -13,12 +13,10 @@ export const proceedVerification = () => {
 }
 
 
-export const messageObjFactory = ( type: string, status: string, data: DynamoDBDocType) => {
-    
-        console.log("QUEUE.QUEUE: ", Queue.Queue);
+export const messageObjFactory = async ( type: string, status: string, data: DynamoDBDocType) => {
     return {
 
-        QueueUrl: Queue.Queue.queueUrl,
+        // QueueUrl: Queue.Queue.queueUrl,
         MessageBody: JSON.stringify({
             type: type,
             status: status,

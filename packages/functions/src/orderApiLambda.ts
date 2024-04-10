@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
 import { APIGatewayProxyEvent } from "aws-lambda";
+import { Queue } from "sst/node/queue";
 import { Table } from "sst/node/table";
 import { createdAt, messageObjFactory } from "helpers/helpers";
 import dynamoDb from "../../core/src/dynamodb";
@@ -7,6 +8,7 @@ import dynamoDb from "../../core/src/dynamodb";
 const sqs = new AWS.SQS();
 
 export async function main(event: APIGatewayProxyEvent) {
+
     let data = {
         order_ref: "",
         order_item: 0,
@@ -26,6 +28,7 @@ export async function main(event: APIGatewayProxyEvent) {
             body: JSON.stringify({ error: true }),
         };
     }
+
     const params = {
         TableName: Table.Orders.tableName,
         Item: {
@@ -39,15 +42,17 @@ export async function main(event: APIGatewayProxyEvent) {
             save_data: data.save_data,
         }
     }
-
     try {
         const dataBase = await dynamoDb.put(params);
-
+        const msgData = await messageObjFactory("order_notification", "pending", data);
+        
+        const msgObj = {
+            QueueUrl: Queue.OrderNoticeQueue.queueUrl,
+            ...msgData
+        }
         const notify = await sqs
-            .sendMessage(messageObjFactory("order_notification", "pending", data))
-            .promise().then(() => {
-                sqs.sendMessage(messageObjFactory("order_billing", "pending", data)).promise()
-            }).then();
+            .sendMessage(msgObj)
+            .promise();
         return {
             statusCode: 200,
             body: JSON.stringify({ order: true }),

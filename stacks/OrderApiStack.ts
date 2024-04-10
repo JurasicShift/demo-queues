@@ -1,17 +1,13 @@
-import { StackContext, Queue, Api, use } from "sst/constructs";
+import { StackContext, Api, use } from "sst/constructs";
 import { StorageStack } from "./StorageStack";
+import { OrderNoticeStack } from "./OrderNoticeStack";
 
 
 
 export function OrderApiStack({ stack }: StackContext) {
 
   const { table } = use(StorageStack);
-
-   const queue = new Queue(stack, "Queue", {
-    consumer: "packages/functions/src/consumer.main",
-  });
-
-  queue.bind([table]);
+  const { queue } = use(OrderNoticeStack);
 
 const api = new Api(stack, "Api", {
   defaults: {
@@ -20,7 +16,7 @@ const api = new Api(stack, "Api", {
     },
   },
   routes: {
-    "POST /order": "packages/functions/src/lambda.main",
+    "POST /order": "packages/functions/src/orderApiLambda.main",
   },
 });
 
