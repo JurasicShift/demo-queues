@@ -1,12 +1,13 @@
-import { SQSEvent, } from "aws-lambda";
+import { SQSEvent } from "aws-lambda";
 import dynamoDb from "./dynamodb";
 import { DynamoDBDocType } from "../../functions/types";
 
 type ConsumerType = (dbData: DynamoDBDocType) => Promise<object>;
+type ConsumerRtnType = (event: SQSEvent) => Promise<void>;
 
-export default async function handler( table: string, consumer: ConsumerType) {
+export default async function handler( table: string, consumer: ConsumerType):Promise<ConsumerRtnType> {
     console.log("hit handler ...");
-    return async function (event: SQSEvent) {
+    return async (event: SQSEvent) => {
         console.log("hit handler return");
         const records: any[] = event.Records;
         let results: object[] = [];
@@ -24,7 +25,7 @@ export default async function handler( table: string, consumer: ConsumerType) {
 
                 const { Item } = await dynamoDb.get(params);
                 const document = Item as DynamoDBDocType;
-                body = consumer(document);
+                body = await consumer(document);
                 statusCode = 200;
 
             } catch (error) {

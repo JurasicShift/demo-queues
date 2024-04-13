@@ -10,7 +10,9 @@ import handler from "../../core/src/handler";
 const sqs = new AWS.SQS();
 const tableUrl = Table.Orders.tableName;
 
-async function orderNotice(dbData: DynamoDBDocType) {
+ 
+
+export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
     console.log("hit order notice...");
         if(!dbData) {
             throw new Error("Data not available");
@@ -28,7 +30,5 @@ async function orderNotice(dbData: DynamoDBDocType) {
                         .promise(); 
                         return notify;
         
-} 
-
-export const main = handler(tableUrl, orderNotice);
+});
 
