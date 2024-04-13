@@ -1,3 +1,5 @@
+import { SQSEvent } from "aws-lambda";
+
 export interface MessageType {
     type: string,
     status: string,
@@ -22,3 +24,7 @@ export interface DynamoDBEmailType {
     first_name: string,
     email: string,
 }
+
+export type ConsumerType = (dbData: DynamoDBDocType) => Promise<object | Error>;
+
+export type ConsumerRtnType = (event: SQSEvent) => Promise<void>;

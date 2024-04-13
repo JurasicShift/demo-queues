@@ -1,23 +1,20 @@
 import AWS from "aws-sdk";
 import { Table } from "sst/node/table";
 import { Queue } from "sst/node/queue";
-import { SQSEvent, } from "aws-lambda";
-import dynamoDb from "../../core/src/dynamodb";
-import {  DynamoDBDocType } from "../types";
-import { consumerRtnObj, messageObjFactory } from "helpers/helpers";
-import handler from "../../core/src/handler";
+import {  DynamoDBDocType } from "../../types";
+import {  messageObjFactory, dataAvailable } from "../../helpers/helpers";
+import handler from "../../../core/src/handler";
 
 const sqs = new AWS.SQS();
 const tableUrl = Table.Orders.tableName;
 
  
-
 export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
-    console.log("hit order notice...");
-        if(!dbData) {
-            throw new Error("Data not available");
-        }
-        console.log(`ORDER RECIEVED\n NOTIFICATION SENT TO: ${dbData.first_name}\n AT ${dbData.email}.\n ORDER REFERENCE: ${dbData.order_ref}`)
+    
+        const dataChecked = dataAvailable(dbData);
+        console.log("ORDER NOTICE CONSUMER QUEUE: ", Queue);
+        if(dataChecked) {
+            console.log(`ORDER RECIEVED\n NOTIFICATION SENT TO: ${dbData.first_name}\n AT ${dbData.email}.\n ORDER REFERENCE: ${dbData.order_ref}`)
         
         const msgData = await messageObjFactory("order_billing", "pending", dbData);
         
@@ -29,6 +26,11 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
                         .sendMessage(msgObj)
                         .promise(); 
                         return notify;
+        } else {
+            throw new Error("Data not available, notification not sent");
+        }
+
+        
         
 });
 

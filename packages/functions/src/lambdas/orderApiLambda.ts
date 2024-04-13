@@ -2,8 +2,8 @@ import AWS from "aws-sdk";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { Queue } from "sst/node/queue";
 import { Table } from "sst/node/table";
-import { createdAt, messageObjFactory } from "helpers/helpers";
-import dynamoDb from "../../core/src/dynamodb";
+import { createdAt, messageObjFactory } from "../../helpers/helpers";
+import dynamoDb from "../../../core/src/dynamodb";
 
 const sqs = new AWS.SQS();
 

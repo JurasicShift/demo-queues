@@ -1,5 +1,4 @@
 import {  DynamoDBDocType } from "../types";
-// import { Queue } from "sst/node/queue";
 
 export const createdAt = (): string => {
     const timestamp = Date.now();
@@ -7,16 +6,17 @@ export const createdAt = (): string => {
     return date.toISOString();
 }
 
-export const proceedVerification = () => {
+export const bankingVerification = (num: number = 8) => {
     const result = Math.floor(Math.random() * 11);
-    return result <= 8 ? true : false;
+    return result <= num ? true : false;
 }
 
+export const shippingVerification = (num: number) => {
+    return bankingVerification(num);
+}
 
 export const messageObjFactory = async ( type: string, status: string, data: DynamoDBDocType) => {
     return {
-
-        // QueueUrl: Queue.Queue.queueUrl,
         MessageBody: JSON.stringify({
             type: type,
             status: status,
@@ -31,4 +31,11 @@ export const consumerRtnObj = (consumer: string, status: boolean) => {
         consumer,
         status
     }
+}
+
+export const dataAvailable = (data: DynamoDBDocType) =>{
+    if(!data) {
+        throw new Error("Data not available");
+    }
+    return data;
 }

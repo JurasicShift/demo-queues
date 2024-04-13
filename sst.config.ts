@@ -1,8 +1,11 @@
 import { SSTConfig } from "sst";
-import { OrderApiStack } from "./stacks/OrderApiStack";
+import { OrderApiStack } from "./stacks/OrderApi";
 import { StorageStack } from "./stacks/StorageStack";
-import { OrderNoticeStack } from "./stacks/OrderNoticeStack";
-import { OrderBillingStack } from "./stacks/OrderBillingStack";
+import { OrderNoticeStack } from "./stacks/OrderNotice";
+import { OrderBillingStack } from "./stacks/OrderBilling";
+import { OrderProcessingStack } from "./stacks/OrderProcessing";
+import { OrderDispatchStack } from "./stacks/OrderDispatch";
+import { OrderErrorsStack } from "./stacks/OrderErrors";
 
 export default {
   config(_input) {
@@ -12,6 +15,6 @@ export default {
     };
   },
   stacks(app) {
-    app.stack(StorageStack).stack(OrderBillingStack).stack(OrderNoticeStack).stack(OrderApiStack);
+    app.stack(StorageStack).stack(OrderErrorsStack).stack(OrderDispatchStack).stack(OrderProcessingStack).stack(OrderBillingStack).stack(OrderNoticeStack).stack(OrderApiStack);
   }
 } satisfies SSTConfig;
