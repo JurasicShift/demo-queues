@@ -1,13 +1,18 @@
+import AWS from "aws-sdk";
 import { SQSEvent } from "aws-lambda";
 import dynamoDb from "./dynamodb";
-import { DynamoDBDocType, ConsumerType, ConsumerRtnType } from "../../functions/types";
+import { DynamoDBDocType, ConsumerType, ConsumerRtnType,  } from "../../functions/types";
 import { Queue } from "sst/node/queue";
+import { messageObjFactory } from "../../functions/helpers/helpers";
+
+const sqs = new AWS.SQS();
 
 export default async function handler( table: string, consumer: ConsumerType):Promise<ConsumerRtnType> {
     return async (event: SQSEvent) => {
+
         const records: any[] = event.Records;
-        let results: object[] = [];
-        console.log("QUEUE IN HANDLER: ", Queue);
+        let results: any[] = [];
+
         for (let record of records) {
             const msg = JSON.parse(record.body);
 
@@ -26,14 +31,30 @@ export default async function handler( table: string, consumer: ConsumerType):Pr
 
             } catch (error: any) {
                 statusCode = error.statusCode;
-                console.error(error);
                 body ={
                     error_msg: error.message,
-                    error_location: error.location
+                    error_location: error.location,
+                    ...document
                 }
             }
             results = [...results, {body, statusCode}]
-            console.log("RESULTS: ", results);
+        }
+
+        for(let result of results) {
+            if(result.statusCode === 500) {
+            
+            const msgData = await messageObjFactory("order_errors", "error", result.body);
+
+            const msgObj = {
+                QueueUrl: Queue.OrderErrorsQueue.queueUrl,
+                ...msgData
+            }
+            const notify = await sqs
+                .sendMessage(msgObj)
+                .promise();
+        }
+            results = results.filter(item => item.body.order_ref !== result.body.order_ref);
+
         }
     }
 }

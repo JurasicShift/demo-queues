@@ -4,6 +4,7 @@ import { Queue } from "sst/node/queue";
 import {  DynamoDBDocType } from "../../types";
 import {  messageObjFactory, dataAvailable, shippingVerification } from "../../helpers/helpers";
 import handler from "../../../core/src/handler";
+import { customError } from "helpers/error";
 
 const sqs = new AWS.SQS();
 const tableUrl = Table.Orders.tableName;
@@ -15,7 +16,7 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
     let verified;
 
     if(dataChecked) {
-         verified = shippingVerification(9);
+         verified = shippingVerification(8);
     }
 
     if(verified) {
@@ -32,7 +33,7 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
                         .promise(); 
                         return notify;
     } else {
-        throw new Error("Shipping failed. Out of stock");
+        return customError("Shipping failed. Out of stock", "order_processing");
     }     
         
 });

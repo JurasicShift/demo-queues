@@ -1,4 +1,4 @@
-import {  DynamoDBDocType } from "../types";
+import {  DynamoDBDocType, ErrorBody, MsgBody } from "../types";
 
 export const createdAt = (): string => {
     const timestamp = Date.now();
@@ -15,14 +15,22 @@ export const shippingVerification = (num: number) => {
     return bankingVerification(num);
 }
 
-export const messageObjFactory = async ( type: string, status: string, data: DynamoDBDocType) => {
+export const messageObjFactory = async ( type: string, status: string, data: MsgBody) => {
+    let msgObj = {
+        type: type,
+        status: status,
+        order_ref: data.order_ref,
+        order_item: data.order_item
+    }
+    
+    if("error_location" in data) {
+        msgObj = {
+            ...msgObj,
+            ...data
+        }
+    }
     return {
-        MessageBody: JSON.stringify({
-            type: type,
-            status: status,
-            order_ref: data.order_ref,
-            order_item: data.order_item
-        })
+        MessageBody: JSON.stringify(msgObj)
     }
 }
 

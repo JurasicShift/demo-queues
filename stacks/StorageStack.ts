@@ -25,10 +25,10 @@ export function StorageStack({ stack }: StackContext) {
 // curl -X POST \
 // -H 'Content-Type: application/json' \
 // -d '{
-//   "order_ref": "nnvwonderk8787393n7y",
-//   "order_item": 1066658476,
-//   "surname": "Wonder",
-//   "first_name": "Julie",
+//   "order_ref": "hhhy76767jf7y",
+//   "order_item": 1676090900906,
+//   "surname": "Bedpan",
+//   "first_name": "Brian",
 //   "banking": 47758757587,
 //   "email": "jethro@tull.com",
 //   "save_data": "false"

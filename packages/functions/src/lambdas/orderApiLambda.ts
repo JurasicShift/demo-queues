@@ -4,6 +4,7 @@ import { Queue } from "sst/node/queue";
 import { Table } from "sst/node/table";
 import { createdAt, messageObjFactory } from "../../helpers/helpers";
 import dynamoDb from "../../../core/src/dynamodb";
+import { customError } from "helpers/error";
 
 const sqs = new AWS.SQS();
 
@@ -23,10 +24,7 @@ export async function main(event: APIGatewayProxyEvent) {
     if (event.body != null) {
         data = JSON.parse(event.body);
     } else {
-        return {
-            statusCode: 404,
-            body: JSON.stringify({ error: true }),
-        };
+        return customError("Data unavailable", "order_api")
     }
 
     const params = {
@@ -44,6 +42,9 @@ export async function main(event: APIGatewayProxyEvent) {
     }
     try {
         const dataBase = await dynamoDb.put(params);
+
+       if(!dataBase) throw customError("Database not responding", "order_api");
+
         const msgData = await messageObjFactory("order_notification", "pending", data);
         
         const msgObj = {
@@ -57,17 +58,24 @@ export async function main(event: APIGatewayProxyEvent) {
             statusCode: 200,
             body: JSON.stringify({ order: true }),
         };
-    } catch (error) {
-        let message;
-        if (error instanceof Error) {
-            message = error.message;
-        } else {
-            message = String(error);
+    } catch (error: any) {
+    
+      let body ={
+            error_msg: error.message,
+            error_location: error.location,
+            ...data
         }
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: message }),
-        };
+                    
+            const msgData = await messageObjFactory("order_errors", "error", body);
+
+            const msgObj = {
+                QueueUrl: Queue.OrderErrorsQueue.queueUrl,
+                ...msgData
+            }
+            const notify = await sqs
+                .sendMessage(msgObj)
+                .promise();
+        return notify;
     }
 }
 

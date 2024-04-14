@@ -28,3 +28,22 @@ export interface DynamoDBEmailType {
 export type ConsumerType = (dbData: DynamoDBDocType) => Promise<object | Error>;
 
 export type ConsumerRtnType = (event: SQSEvent) => Promise<void>;
+
+// interface MessageRecieved {
+//     MD5OfMessageBody: string,
+//     MessageId: string
+// }
+
+export interface ErrorBody extends DynamoDBDocType {
+    error_msg: string,
+    error_location: string
+}
+
+
+
+export type MsgBody = ErrorBody | DynamoDBDocType;
+
+// export interface Result {
+//     statusCode: number,
+//     body: ResultBody
+// }
