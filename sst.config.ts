@@ -6,6 +6,7 @@ import { OrderBillingStack } from "./stacks/OrderBilling";
 import { OrderProcessingStack } from "./stacks/OrderProcessing";
 import { OrderDispatchStack } from "./stacks/OrderDispatch";
 import { OrderErrorsStack } from "./stacks/OrderErrors";
+import { FrontendStack } from "./stacks/FrontendStack";
 
 export default {
   config(_input) {
@@ -15,6 +16,6 @@ export default {
     };
   },
   stacks(app) {
-    app.stack(StorageStack).stack(OrderErrorsStack).stack(OrderDispatchStack).stack(OrderProcessingStack).stack(OrderBillingStack).stack(OrderNoticeStack).stack(OrderApiStack);
+    app.stack(StorageStack).stack(OrderErrorsStack).stack(OrderDispatchStack).stack(OrderProcessingStack).stack(OrderBillingStack).stack(OrderNoticeStack).stack(OrderApiStack).stack(FrontendStack);
   }
 } satisfies SSTConfig;
