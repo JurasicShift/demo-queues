@@ -5,7 +5,7 @@ export function FrontendStack({ stack, app }: StackContext) {
     const { api } = use(OrderApiStack);
 
     const site = new StaticSite(stack, "SvelteSite", {
-        path: "packages/frontend",
+        path: "packages/functions/frontend",
         buildCommand: "npm run build",
         buildOutput: "dist",
 

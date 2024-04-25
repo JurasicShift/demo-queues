@@ -9,7 +9,7 @@ import { customError } from "helpers/error";
 const sqs = new AWS.SQS();
 
 export async function main(event: APIGatewayProxyEvent) {
-
+    console.log("event body:", event.body);
     let data = {
         order_ref: "",
         order_item: 0,
@@ -43,10 +43,10 @@ export async function main(event: APIGatewayProxyEvent) {
     try {
         const dataBase = await dynamoDb.put(params);
 
-       if(!dataBase) throw customError("Database not responding", "order_api");
+        if (!dataBase) throw customError("Database not responding", "order_api");
 
         const msgData = await messageObjFactory("order_notification", "pending", data);
-        
+
         const msgObj = {
             QueueUrl: Queue.OrderNoticeQueue.queueUrl,
             ...msgData
@@ -59,22 +59,22 @@ export async function main(event: APIGatewayProxyEvent) {
             body: JSON.stringify({ order: true }),
         };
     } catch (error: any) {
-    
-      let body ={
+
+        let body = {
             error_msg: error.message,
             error_location: error.location,
             ...data
         }
-                    
-            const msgData = await messageObjFactory("order_errors", "error", body);
 
-            const msgObj = {
-                QueueUrl: Queue.OrderErrorsQueue.queueUrl,
-                ...msgData
-            }
-            const notify = await sqs
-                .sendMessage(msgObj)
-                .promise();
+        const msgData = await messageObjFactory("order_errors", "error", body);
+
+        const msgObj = {
+            QueueUrl: Queue.OrderErrorsQueue.queueUrl,
+            ...msgData
+        }
+        const notify = await sqs
+            .sendMessage(msgObj)
+            .promise();
         return notify;
     }
 }
