@@ -1,35 +1,33 @@
 <script lang="ts">
 	import { API } from "aws-amplify";
 	import { uniqueOrderRef } from "../helpers";
+	import type { FormDBDocType } from "../../types";
+	export let notification;
 
-	let first_name: string,
-		surname: string,
-		banking: number,
-		email: string,
-		save_data: boolean = false,
-		order_item: number = 3771900800,
-		order_ref: string;
+	const formData: FormDBDocType = {
+		first_name: "",
+		surname: "",
+		banking: "",
+		email: "",
+		save_data: false,
+		order_item: 3771900800,
+		order_ref: "",
+	};
 
 	const handleSubmit = async () => {
-		order_ref = uniqueOrderRef(surname);
+		formData.order_ref = uniqueOrderRef(
+			formData.surname
+		);
 
 		try {
 			const response = await API.post(
 				"queueApi",
 				"/order",
 				{
-					body: {
-						first_name,
-						surname,
-						banking,
-						email,
-						save_data,
-						order_item,
-						order_ref,
-					},
+					body: formData,
 				}
 			);
-			console.log("RESPONSE: ", response);
+			notification.set(response.order);
 		} catch (e) {
 			console.log("ERROR: ", e);
 		}
@@ -47,29 +45,29 @@
 		<input
 			type="text"
 			placeholder="firstname"
-			bind:value={first_name}
+			bind:value={formData.first_name}
 		/>
 		<input
 			type="text"
 			placeholder="surname"
-			bind:value={surname}
+			bind:value={formData.surname}
 		/>
 		<input
 			type="number"
 			placeholder="account number"
-			bind:value={banking}
+			bind:value={formData.banking}
 		/>
 		<input
 			type="text"
 			placeholder="email"
-			bind:value={email}
+			bind:value={formData.email}
 		/>
 		<label for="remember_me"
 			>Remember me? <input
 				type="checkbox"
 				id="remember_me"
 				class="shop__form--checkbox"
-				bind:checked={save_data}
+				bind:checked={formData.save_data}
 			/></label
 		>
 
@@ -79,7 +77,6 @@
 
 <style>
 	h2 {
-		color: #838383;
 		margin-left: 20px;
 		margin-top: 30px;
 	}
@@ -105,7 +102,6 @@
 	}
 
 	.shop__form label {
-		color: #838383;
 		margin-left: 10px;
 		font-weight: bold;
 	}

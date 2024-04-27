@@ -7,7 +7,6 @@ export interface MessageType {
     order_item: number
 }
 
-
 export interface DynamoDBDocType {
     order_ref: string,
     order_item: number,

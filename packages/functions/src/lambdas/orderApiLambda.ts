@@ -9,7 +9,6 @@ import { customError } from "helpers/error";
 const sqs = new AWS.SQS();
 
 export async function main(event: APIGatewayProxyEvent) {
-    console.log("event body:", event.body);
     let data = {
         order_ref: "",
         order_item: 0,
@@ -56,7 +55,7 @@ export async function main(event: APIGatewayProxyEvent) {
             .promise();
         return {
             statusCode: 200,
-            body: JSON.stringify({ order: true }),
+            body: JSON.stringify({ order: "Order recieved" }),
         };
     } catch (error: any) {
 
