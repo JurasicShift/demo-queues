@@ -55,7 +55,7 @@ export async function main(event: APIGatewayProxyEvent) {
             .promise();
         return {
             statusCode: 200,
-            body: JSON.stringify({ order: "Order recieved" }),
+            body: JSON.stringify({ statusCode: 200, msg: "Order recieved", order_ref: data.order_ref }),
         };
     } catch (error: any) {
 

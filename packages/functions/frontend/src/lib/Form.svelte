@@ -2,9 +2,11 @@
 	import { API } from "aws-amplify";
 	import { uniqueOrderRef } from "../helpers";
 	import type { FormDBDocType } from "../../types";
-	export let notification;
+	import NoticeStore from "../stores/NoticeStore";
+	import Spinner from "./Spinner.svelte";
+	let spinActive = false;
 
-	const formData: FormDBDocType = {
+	const data = {
 		first_name: "",
 		surname: "",
 		banking: "",
@@ -14,7 +16,16 @@
 		order_ref: "",
 	};
 
+	let formData: FormDBDocType = {
+		...data,
+	};
+
+	const clearInputs = () => {
+		return (formData = { ...data });
+	};
+
 	const handleSubmit = async () => {
+		spinActive = !spinActive;
 		formData.order_ref = uniqueOrderRef(
 			formData.surname
 		);
@@ -27,14 +38,21 @@
 					body: formData,
 				}
 			);
-			notification.set(response.order);
-		} catch (e) {
-			console.log("ERROR: ", e);
+
+			if (response.statusCode === 200) {
+				NoticeStore.set(response);
+				spinActive = !spinActive;
+				clearInputs();
+			}
+			console.log("response: ", response);
+		} catch (e: any) {
+			console.error("ERROR: ", e.message);
 		}
 	};
 </script>
 
 <h2>Purchase something</h2>
+
 <div class="shop">
 	<form
 		action="/order"
@@ -42,6 +60,10 @@
 		class="shop__form"
 		on:submit|preventDefault={handleSubmit}
 	>
+		<div class="shop__form--spinner">
+			<Spinner {spinActive} />
+		</div>
+
 		<input
 			type="text"
 			placeholder="firstname"
@@ -93,6 +115,13 @@
 		flex-direction: column;
 	}
 
+	.shop__form--spinner {
+		width: 100%;
+		height: 30px;
+		display: flex;
+		justify-content: flex-end;
+	}
+
 	.shop__form input {
 		width: 250px;
 		margin: 10px;
@@ -112,12 +141,13 @@
 
 	.shop__form button {
 		width: 100px;
-		color: aliceblue;
+		color: white;
 		background-color: orangered;
 		padding: 10px 20px;
 		border: none;
 		border-radius: 40px;
 		margin-top: 20px;
 		margin-left: 10px;
+		cursor: pointer;
 	}
 </style>

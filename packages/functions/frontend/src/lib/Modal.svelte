@@ -1,19 +1,12 @@
 <script lang="ts">
 	export let showModal = false;
-	export let ref;
-	export let notification;
-	let msgValue = "";
-	notification.subscribe((msg: string) => {
-		msgValue = msg;
-		if (msg.length > 0) showModal = !showModal;
-	});
 </script>
 
 {#if showModal}
 	<div class="modal">
 		<div class="modal__box">
-			<div class="modal__box--ref">
-				<p>Order ref: {ref}</p>
+			<div class="modal__box--header">
+				<slot name="header"></slot>
 				<div class="modal__box--close">
 					<button on:click>
 						<img
@@ -25,8 +18,8 @@
 			</div>
 
 			<hr />
-			<div class="modal__box--msg">
-				<p>Status: {msgValue}</p>
+			<div class="modal__box--content">
+				<slot name="content"></slot>
 			</div>
 		</div>
 	</div>
@@ -51,7 +44,7 @@
 		padding: 20px 10px;
 	}
 
-	.modal__box--ref {
+	.modal__box--header {
 		display: flex;
 		justify-content: space-between;
 	}
@@ -63,7 +56,7 @@
 		border: none;
 	}
 
-	.modal__box--msg {
+	.modal__box--content {
 		text-align: center;
 		margin-top: 30px;
 	}
