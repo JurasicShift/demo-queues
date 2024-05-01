@@ -1,8 +1,10 @@
 import { StackContext, StaticSite, use } from "sst/constructs";
 import { OrderApiStack } from "./OrderApi";
+import { StorageStack } from "./StorageStack";
 
 export function FrontendStack({ stack, app }: StackContext) {
     const { api } = use(OrderApiStack);
+    const { socket } = use(StorageStack);
 
     const site = new StaticSite(stack, "SvelteSite", {
         path: "packages/functions/frontend",
@@ -11,7 +13,8 @@ export function FrontendStack({ stack, app }: StackContext) {
 
         environment: {
             VITE_API_URL: api.url,
-            VITE_REGION: app.region
+            VITE_REGION: app.region,
+            VITE_SOCKET_URL: socket.url
         }
     });
 

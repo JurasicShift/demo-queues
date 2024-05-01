@@ -1,4 +1,4 @@
-import { StackContext, Table } from "sst/constructs";
+import { StackContext, Table, WebSocketApi } from "sst/constructs";
 
 export function StorageStack({ stack }: StackContext) {
 
@@ -16,8 +16,26 @@ export function StorageStack({ stack }: StackContext) {
     primaryIndex: { partitionKey: "order_ref", sortKey: "order_item" },
   });
 
+  const socket = new WebSocketApi(stack, "Api", {
+    defaults: {
+      function: {
+        bind: [table],
+      },
+    },
+    routes: {
+      $connect: "packages/functions/src/sockets/connect.main",
+      $disconnect: "packages/functions/src/sockets/disconnect.main",
+      sendmessage: "packages/functions/src/sockets/sendMessage.main"
+    }
+  });
+
+  stack.addOutputs({
+    ApiEndpoint: socket.url,
+  })
+
   return {
     table,
+    socket
   };
 }
 
