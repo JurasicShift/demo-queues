@@ -7,7 +7,7 @@ import handler from "../../../core/src/handler";
 import { customError } from "helpers/error";
 
 const sqs = new AWS.SQS();
-const tableUrl = Table.Orders.tableName;
+const tableUrl = Table.OrdersDB.tableName;
 
 
 export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {

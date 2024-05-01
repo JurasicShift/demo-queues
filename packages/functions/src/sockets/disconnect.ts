@@ -12,5 +12,7 @@ export const main: APIGatewayProxyHandler = async (event) => {
     //     }
     // }
 
+    console.log("hit disconnect with: ", event);
+
     return { statusCode: 200, body: "Disconnected WebSock" }
 }

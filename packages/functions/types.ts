@@ -8,6 +8,7 @@ export interface MessageType {
 }
 
 export interface DynamoDBDocType {
+    user_id: string,
     order_ref: string,
     order_item: number,
     surname: string,

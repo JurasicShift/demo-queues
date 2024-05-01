@@ -11,6 +11,7 @@ export function OrderApiStack({ stack }: StackContext) {
   const { queue: errorQueue } = use(OrderErrorsStack);
   const api = new Api(stack, "Api", {
     defaults: {
+      authorizer: "iam",
       function: {
         bind: [table, noticeQueue, errorQueue],
       },

@@ -7,19 +7,19 @@ import { dataAvailable, messageObjFactory, bankingVerification } from "../../hel
 import { customError } from "../../helpers/error";
 
 const sqs = new AWS.SQS();
-const tableUrl = Table.Orders.tableName;
+const tableUrl = Table.OrdersDB.tableName;
 
 export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
- 
+
     const dataChecked = dataAvailable(dbData);
 
     const verified = bankingVerification();
 
     const log = verified ? `BANKING DETAILS CONFIRMED FOR:\n ${dbData.first_name} ${dbData.surname}\n WITH AC NUMBER ${dbData.banking}.` : `INSUFFICIANT FUNDS:\n ${dbData.first_name} ${dbData.surname}\n WITH AC NUMBER ${dbData.banking}.`
-   
+
     console.log(log);
 
-    if(verified) {
+    if (verified) {
         const msgData = await messageObjFactory("order_processing", "pending", dbData);
 
         const msgObj = {
@@ -31,7 +31,7 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
             .promise();
         return notify;
     } else {
-          return customError("Banking verification failed", "order_billing");
+        return customError("Banking verification failed", "order_billing");
     }
 
 });

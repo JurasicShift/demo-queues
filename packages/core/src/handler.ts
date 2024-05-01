@@ -1,13 +1,13 @@
 import AWS from "aws-sdk";
 import { SQSEvent } from "aws-lambda";
 import dynamoDb from "./dynamodb";
-import { DynamoDBDocType, ConsumerType, ConsumerRtnType,  } from "../../functions/types";
+import { DynamoDBDocType, ConsumerType, ConsumerRtnType, } from "../../functions/types";
 import { Queue } from "sst/node/queue";
 import { messageObjFactory } from "../../functions/helpers/helpers";
 
 const sqs = new AWS.SQS();
 
-export default async function handler( table: string, consumer: ConsumerType):Promise<ConsumerRtnType> {
+export default async function handler(table: string, consumer: ConsumerType): Promise<ConsumerRtnType> {
     return async (event: SQSEvent) => {
 
         const records: any[] = event.Records;
@@ -18,7 +18,7 @@ export default async function handler( table: string, consumer: ConsumerType):Pr
 
             const params = {
                 TableName: table,
-                Key: { order_ref: msg.order_ref, order_item: msg.order_item }
+                Key: { user_id: msg.user_id, order_ref: msg.order_ref }
             }
             let body, statusCode, document;
 
@@ -31,28 +31,28 @@ export default async function handler( table: string, consumer: ConsumerType):Pr
 
             } catch (error: any) {
                 statusCode = error.statusCode;
-                body ={
+                body = {
                     error_msg: error.message,
                     error_location: error.location,
                     ...document
                 }
             }
-            results = [...results, {body, statusCode}]
+            results = [...results, { body, statusCode }]
         }
 
-        for(let result of results) {
-            if(result.statusCode === 500) {
-            
-            const msgData = await messageObjFactory("order_errors", "error", result.body);
+        for (let result of results) {
+            if (result.statusCode === 500) {
 
-            const msgObj = {
-                QueueUrl: Queue.OrderErrorsQueue.queueUrl,
-                ...msgData
+                const msgData = await messageObjFactory("order_errors", "error", result.body);
+
+                const msgObj = {
+                    QueueUrl: Queue.OrderErrorsQueue.queueUrl,
+                    ...msgData
+                }
+                const notify = await sqs
+                    .sendMessage(msgObj)
+                    .promise();
             }
-            const notify = await sqs
-                .sendMessage(msgObj)
-                .promise();
-        }
             results = results.filter(item => item.body.order_ref !== result.body.order_ref);
 
         }

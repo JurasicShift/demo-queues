@@ -2,8 +2,9 @@ import { StackContext, Table, WebSocketApi } from "sst/constructs";
 
 export function StorageStack({ stack }: StackContext) {
 
-  const table = new Table(stack, "Orders", {
+  const table = new Table(stack, "OrdersDB", {
     fields: {
+      user_id: "string",
       order_ref: "string",
       order_item: "number",
       surname: "string",
@@ -13,10 +14,11 @@ export function StorageStack({ stack }: StackContext) {
       createdAt: "string",
       save_data: "string",
     },
-    primaryIndex: { partitionKey: "order_ref", sortKey: "order_item" },
+    primaryIndex: { partitionKey: "user_id", sortKey: "order_ref" },
   });
 
   const socket = new WebSocketApi(stack, "Api", {
+    // authorizer: "iam",
     defaults: {
       function: {
         bind: [table],
@@ -52,3 +54,14 @@ export function StorageStack({ stack }: StackContext) {
 //   "save_data": "false"
 // }' \
 // https://idh9hih0d5.execute-api.us-east-1.amazonaws.com/order
+
+// aws cognito-idp sign-up \
+//   --region us-east-1 \
+//   --client-id 4v76hv8aknkvpp67ptj67eitv0 \
+//   --username admin@example.com \
+//   --password Passw0rd!
+
+// aws cognito-idp admin-confirm-sign-up \
+//   --region us-east-1 \
+//   --user-pool-id us-east-1_d68KymcTC  \
+//   --username admin@example.com

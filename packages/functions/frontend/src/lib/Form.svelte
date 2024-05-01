@@ -2,7 +2,7 @@
 	import { API } from "aws-amplify";
 	import { uniqueOrderRef } from "../helpers";
 	import type { FormDBDocType } from "../../types";
-	import NoticeStore from "../stores/NoticeStore";
+	import NoticeStore from "../stores/noticeStore";
 	import Spinner from "./Spinner.svelte";
 
 	let spinActive = false;

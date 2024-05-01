@@ -10,6 +10,7 @@ const sqs = new AWS.SQS();
 
 export async function main(event: APIGatewayProxyEvent) {
     let data = {
+        user_id: "",
         order_ref: "",
         order_item: 0,
         surname: "",
@@ -27,16 +28,19 @@ export async function main(event: APIGatewayProxyEvent) {
     }
 
     const params = {
-        TableName: Table.Orders.tableName,
+        TableName: Table.OrdersDB.tableName,
         Item: {
-            order_ref: data.order_ref,
-            order_item: data.order_item,
-            surname: data.surname,
-            first_name: data.first_name,
-            banking: data.banking,
-            email: data.email,
+            ...data,
+            user_id: event.requestContext.authorizer?.iam.cognitoIdentity.identityId,
+            // order_ref: data.order_ref,
+            // order_item: data.order_item,
+            // surname: data.surname,
+            // first_name: data.first_name,
+            // banking: data.banking,
+            // email: data.email,
+            // save_data: data.save_data,
             createdAt: createdAt(),
-            save_data: data.save_data,
+
         }
     }
     try {
