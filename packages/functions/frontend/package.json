@@ -19,6 +19,7 @@
 		"typescript": "^5.2.2"
 	},
 	"dependencies": {
+		"@types/amplify": "^1.1.28",
 		"aws-amplify": "^5.3.18",
 		"vite": "^5.1.4"
 	}

@@ -17,6 +17,9 @@ export default {
     };
   },
   stacks(app) {
-    app.stack(StorageStack).stack(OrderErrorsStack).stack(OrderDispatchStack).stack(OrderProcessingStack).stack(OrderBillingStack).stack(OrderNoticeStack).stack(OrderApiStack).stack(FrontendStack).stack(AuthStack);
+    app.stack(StorageStack).stack(OrderErrorsStack).stack(OrderDispatchStack).stack(OrderProcessingStack).stack(OrderBillingStack).stack(OrderNoticeStack).stack(OrderApiStack).stack(AuthStack).stack(FrontendStack);
   }
 } satisfies SSTConfig;
+
+
+// app.stack(StorageStack).stack(OrderErrorsStack).stack(OrderDispatchStack).stack(OrderProcessingStack).stack(OrderBillingStack).stack(OrderNoticeStack).stack(OrderApiStack).stack(AuthStack).stack(FrontendStack);

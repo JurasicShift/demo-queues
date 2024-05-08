@@ -22,7 +22,11 @@ export async function main(event: APIGatewayProxyEvent) {
     };
 
     if (event.body != null) {
-        data = JSON.parse(event.body);
+        data = {
+            ...JSON.parse(event.body),
+            user_id: event.requestContext.authorizer?.iam.cognitoIdentity.identityId,
+            createdAt: createdAt(),
+        }
     } else {
         return customError("Data unavailable", "order_api")
     }
@@ -31,18 +35,9 @@ export async function main(event: APIGatewayProxyEvent) {
         TableName: Table.OrdersDB.tableName,
         Item: {
             ...data,
-            user_id: event.requestContext.authorizer?.iam.cognitoIdentity.identityId,
-            // order_ref: data.order_ref,
-            // order_item: data.order_item,
-            // surname: data.surname,
-            // first_name: data.first_name,
-            // banking: data.banking,
-            // email: data.email,
-            // save_data: data.save_data,
-            createdAt: createdAt(),
-
         }
     }
+
     try {
         const dataBase = await dynamoDb.put(params);
 

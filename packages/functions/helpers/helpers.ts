@@ -1,4 +1,4 @@
-import {  DynamoDBDocType, ErrorBody, MsgBody } from "../types";
+import { DynamoDBDocType, ErrorBody, MsgBody } from "../types";
 
 export const createdAt = (): string => {
     const timestamp = Date.now();
@@ -15,15 +15,16 @@ export const shippingVerification = (num: number) => {
     return bankingVerification(num);
 }
 
-export const messageObjFactory = async ( type: string, status: string, data: MsgBody) => {
+export const messageObjFactory = async (type: string, status: string, data: MsgBody) => {
     let msgObj = {
         type: type,
         status: status,
         order_ref: data.order_ref,
-        order_item: data.order_item
+        order_item: data.order_item,
+        user_id: data.user_id
     }
-    
-    if("error_location" in data) {
+
+    if ("error_location" in data) {
         msgObj = {
             ...msgObj,
             ...data
@@ -41,8 +42,8 @@ export const consumerRtnObj = (consumer: string, status: boolean) => {
     }
 }
 
-export const dataAvailable = (data: DynamoDBDocType) =>{
-    if(!data) {
+export const dataAvailable = (data: DynamoDBDocType) => {
+    if (!data) {
         throw new Error("Data not available");
     }
     return data;

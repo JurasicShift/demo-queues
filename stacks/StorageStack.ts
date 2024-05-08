@@ -27,6 +27,7 @@ export function StorageStack({ stack }: StackContext) {
     routes: {
       $connect: "packages/functions/src/sockets/connect.main",
       $disconnect: "packages/functions/src/sockets/disconnect.main",
+      $default: "packages/functions/src/sockets/default.main",
       sendmessage: "packages/functions/src/sockets/sendMessage.main"
     }
   });

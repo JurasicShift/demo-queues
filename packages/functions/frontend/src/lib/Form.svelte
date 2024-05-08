@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { API } from "aws-amplify";
+	import { API, Auth } from "aws-amplify";
 	import { uniqueOrderRef } from "../helpers";
 	import type { FormDBDocType } from "../../types";
-	import NoticeStore from "../stores/noticeStore";
+	import {
+		NoticeStore,
+		LoggedInStore,
+	} from "../stores/noticeStore";
 	import Spinner from "./Spinner.svelte";
+	import Button from "./Button.svelte";
 
 	let spinActive = false;
 
@@ -50,6 +54,12 @@
 			console.error("ERROR: ", e.message);
 		}
 	};
+
+	const handleLogout = async () => {
+		console.log("hit handleout");
+		await Auth.signOut();
+		LoggedInStore.set(false);
+	};
 </script>
 
 <h2>Purchase something</h2>
@@ -94,7 +104,15 @@
 			/></label
 		>
 
-		<button>Buy now</button>
+		<Button
+			content={"Buy now"}
+			fn={handleSubmit}
+		/>
+		<Button
+			colour={"#007FFF"}
+			content={"Log out"}
+			fn={handleLogout}
+		/>
 	</form>
 </div>
 
@@ -138,17 +156,5 @@
 
 	input.shop__form--checkbox {
 		width: 20px;
-	}
-
-	.shop__form button {
-		width: 100px;
-		color: white;
-		background-color: orangered;
-		padding: 10px 20px;
-		border: none;
-		border-radius: 40px;
-		margin-top: 20px;
-		margin-left: 10px;
-		cursor: pointer;
 	}
 </style>

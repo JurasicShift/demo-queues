@@ -8,6 +8,7 @@ import { messageObjFactory } from "../../functions/helpers/helpers";
 const sqs = new AWS.SQS();
 
 export default async function handler(table: string, consumer: ConsumerType): Promise<ConsumerRtnType> {
+
     return async (event: SQSEvent) => {
 
         const records: any[] = event.Records;

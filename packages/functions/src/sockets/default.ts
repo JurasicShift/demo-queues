@@ -1,7 +1,5 @@
 import { DynamoDB } from "aws-sdk";
 import { APIGatewayProxyHandler } from "aws-lambda";
-// import { WebSocketApiHandler } from 'sst/node/websocket-api';
-// import { useSession } from 'sst/node/auth';
 // import { Table } from "sst/node/table";
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -13,7 +11,7 @@ export const main: APIGatewayProxyHandler = async (event) => {
 
     //     }
     // }
-    console.log("SOCKET CONNECT: ", event);
+    console.log("SOCKET DEFAULT: ", event);
 
     return { statusCode: 200, body: "Connected WebSock" }
 }

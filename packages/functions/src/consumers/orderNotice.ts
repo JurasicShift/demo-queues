@@ -9,7 +9,6 @@ import { customError } from "helpers/error";
 const sqs = new AWS.SQS();
 const tableUrl = Table.OrdersDB.tableName;
 
-
 export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
 
     const dataChecked = dataAvailable(dbData);
@@ -29,8 +28,5 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
     } else {
         return customError("Notification failed. Data not avialable", "order_notification");
     }
-
-
-
 });
 

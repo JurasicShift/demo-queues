@@ -2,16 +2,20 @@
 	import Header from "./lib/Header.svelte";
 	import Form from "./lib/Form.svelte";
 	import Modal from "./lib/Modal.svelte";
-	import NoticeStore from "./stores/noticeStore";
+
+	import {
+		NoticeStore,
+		LoggedInStore,
+	} from "./stores/noticeStore";
+	import Login from "./lib/Login.svelte";
 	import type { NoticeData } from "../types";
-	import socket from "./sockets/index";
+	import {
+		launchSocket,
+		closeSocket,
+	} from "./sockets/index";
 
 	let showModal = false;
-
-	socket.onopen = event => {
-		socket.send("test message from client");
-		console.log("SOCKET OPEN");
-	};
+	let loggedIn = false;
 
 	const handleModal = () => {
 		showModal = !showModal;
@@ -21,6 +25,22 @@
 		if (notice.msg.length > 0)
 			showModal = !showModal;
 	});
+
+	LoggedInStore.subscribe(
+		(loggedInVal: boolean) => {
+			console.log(loggedIn);
+			loggedIn = loggedInVal;
+		}
+	);
+
+	let socket: WebSocket | null = null;
+
+	$: if (loggedIn && !socket) {
+		socket = launchSocket();
+	} else if (!loggedIn && socket) {
+		closeSocket(socket);
+		socket = null;
+	}
 </script>
 
 <main>
@@ -33,7 +53,11 @@
 		</p>
 	</Modal>
 	<Header />
-	<Form />
+	{#if loggedIn}
+		<Form />
+	{:else}
+		<Login />
+	{/if}
 </main>
 
 <style>
