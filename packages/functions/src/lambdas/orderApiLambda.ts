@@ -2,13 +2,17 @@ import AWS from "aws-sdk";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { Queue } from "sst/node/queue";
 import { Table } from "sst/node/table";
-import { createdAt, messageObjFactory } from "../../helpers/helpers";
+import { createdAt, messageObjFactory, socketObjFactory } from "../../helpers/helpers";
+import { socketMessage } from "../sockets/sendMessage";
 import dynamoDb from "../../../core/src/dynamodb";
 import { customError } from "helpers/error";
 
 const sqs = new AWS.SQS();
 
 export async function main(event: APIGatewayProxyEvent) {
+
+    const cognitoId = event.requestContext.authorizer?.iam.cognitoIdentity.identityId;
+
     let data = {
         user_id: "",
         order_ref: "",
@@ -24,9 +28,11 @@ export async function main(event: APIGatewayProxyEvent) {
     if (event.body != null) {
         data = {
             ...JSON.parse(event.body),
-            user_id: event.requestContext.authorizer?.iam.cognitoIdentity.identityId,
+            user_id: cognitoId,
             createdAt: createdAt(),
         }
+
+        socketMessage(socketObjFactory("Order Processing", data.order_ref));
     } else {
         return customError("Data unavailable", "order_api")
     }
@@ -65,7 +71,7 @@ export async function main(event: APIGatewayProxyEvent) {
         }
 
         const msgData = await messageObjFactory("order_errors", "error", body);
-
+        socketMessage(socketObjFactory(error.message, error.location, 500));
         const msgObj = {
             QueueUrl: Queue.OrderErrorsQueue.queueUrl,
             ...msgData

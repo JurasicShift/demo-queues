@@ -20,7 +20,7 @@
 				email,
 				password
 			);
-			console.log("FORM RESPONSE: ", response);
+
 			LoggedInStore.set(true);
 			spinActive = !spinActive;
 			clearInputs();

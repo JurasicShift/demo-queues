@@ -11,7 +11,7 @@ export const main: APIGatewayProxyHandler = async (event) => {
 
     //     }
     // }
-    console.log("SOCKET DEFAULT: ", event);
+    console.log("SOCKET DEFAULT: ", event.body);
 
     return { statusCode: 200, body: "Connected WebSock" }
 }

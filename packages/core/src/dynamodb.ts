@@ -9,6 +9,7 @@ export default {
   query: (params: DocumentClient.QueryInput) => client.query(params).promise(),
   update: (params: DocumentClient.UpdateItemInput) =>
     client.update(params).promise(),
+  scan: (params: DocumentClient.ScanInput) => client.scan(params).promise(),
   delete: (params: DocumentClient.DeleteItemInput) =>
     client.delete(params).promise(),
 };

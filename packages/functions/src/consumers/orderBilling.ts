@@ -3,7 +3,8 @@ import { Table } from "sst/node/table";
 import { Queue } from "sst/node/queue";
 import { DynamoDBDocType } from "../../types";
 import handler from "../../../core/src/handler";
-import { dataAvailable, messageObjFactory, bankingVerification } from "../../helpers/helpers";
+import { socketMessage } from "src/sockets/sendMessage";
+import { dataAvailable, messageObjFactory, bankingVerification, socketObjFactory } from "../../helpers/helpers";
 import { customError } from "../../helpers/error";
 
 const sqs = new AWS.SQS();
@@ -20,6 +21,7 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
     console.log(log);
 
     if (verified) {
+        socketMessage(socketObjFactory("Bankind Confirmation", dbData.order_ref));
         const msgData = await messageObjFactory("order_processing", "pending", dbData);
 
         const msgObj = {

@@ -1,34 +1,38 @@
 <script lang="ts">
 	import Header from "./lib/Header.svelte";
 	import Form from "./lib/Form.svelte";
-	import Modal from "./lib/Modal.svelte";
-
+	import MessageModal from "./lib/MessageModal.svelte";
 	import {
-		NoticeStore,
+		NoticesStore,
 		LoggedInStore,
 	} from "./stores/noticeStore";
 	import Login from "./lib/Login.svelte";
-	import type { NoticeData } from "../types";
 	import {
 		launchSocket,
 		closeSocket,
 	} from "./sockets/index";
+	import type { NoticeStoreType } from "../types";
 
 	let showModal = false;
 	let loggedIn = false;
 
-	const handleModal = () => {
-		showModal = !showModal;
-	};
+	// type NoticeData = {
+	// 	statusCode: number;
+	// 	order_ref: string;
+	// 	msg: string;
+	// };
 
-	NoticeStore.subscribe((notice: NoticeData) => {
-		if (notice.msg.length > 0)
-			showModal = !showModal;
-	});
+	// type NoticeStore = NoticeData[] | [];
+
+	NoticesStore.subscribe(
+		(notice: NoticeStoreType) => {
+			if (notice.length > 1) showModal = true;
+			else showModal = false;
+		}
+	);
 
 	LoggedInStore.subscribe(
 		(loggedInVal: boolean) => {
-			console.log(loggedIn);
 			loggedIn = loggedInVal;
 		}
 	);
@@ -44,14 +48,7 @@
 </script>
 
 <main>
-	<Modal {showModal} on:click={handleModal}>
-		<p slot="header">
-			Order ref: {$NoticeStore.order_ref}
-		</p>
-		<p slot="content">
-			Status: {$NoticeStore.msg}
-		</p>
-	</Modal>
+	<MessageModal {showModal}></MessageModal>
 	<Header />
 	{#if loggedIn}
 		<Form />

@@ -48,3 +48,13 @@ export const dataAvailable = (data: DynamoDBDocType) => {
     }
     return data;
 }
+
+export const socketObjFactory = (msg: string, ref: string, code: number = 200) => {
+    let socketMsg = {
+        msg: msg,
+        order_ref: ref,
+        statusCode: code
+    }
+
+    return JSON.stringify(socketMsg);
+}

@@ -17,11 +17,18 @@ export function StorageStack({ stack }: StackContext) {
     primaryIndex: { partitionKey: "user_id", sortKey: "order_ref" },
   });
 
+  const socketTable = new Table(stack, "SocketTable", {
+    fields: {
+      id: "string",
+    },
+    primaryIndex: { partitionKey: "id" },
+  })
+
   const socket = new WebSocketApi(stack, "Api", {
     // authorizer: "iam",
     defaults: {
       function: {
-        bind: [table],
+        bind: [table, socketTable],
       },
     },
     routes: {
@@ -38,6 +45,7 @@ export function StorageStack({ stack }: StackContext) {
 
   return {
     table,
+    socketTable,
     socket
   };
 }

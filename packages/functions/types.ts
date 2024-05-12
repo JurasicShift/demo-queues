@@ -35,3 +35,14 @@ export interface ErrorBody extends DynamoDBDocType {
 }
 
 export type MsgBody = ErrorBody | DynamoDBDocType;
+
+export type SocketIdType = {
+    id: string
+}
+type NoticeData = {
+    statusCode: number,
+    order_ref: string,
+    msg: string
+}
+
+export type NoticeStoreType = NoticeData[] | [];

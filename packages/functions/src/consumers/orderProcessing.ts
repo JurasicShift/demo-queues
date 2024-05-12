@@ -2,7 +2,8 @@ import AWS from "aws-sdk";
 import { Table } from "sst/node/table";
 import { Queue } from "sst/node/queue";
 import { DynamoDBDocType } from "../../types";
-import { messageObjFactory, dataAvailable, shippingVerification } from "../../helpers/helpers";
+import { socketMessage } from "src/sockets/sendMessage";
+import { messageObjFactory, dataAvailable, shippingVerification, socketObjFactory } from "../../helpers/helpers";
 import handler from "../../../core/src/handler";
 import { customError } from "helpers/error";
 
@@ -21,7 +22,7 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
 
     if (verified) {
         console.log(`ORDER SUCCESSFULLY PROCESSED FOR ORDER REF: ${dbData.order_ref}`);
-
+        socketMessage(socketObjFactory("Order Processed", dbData.order_ref));
         const msgData = await messageObjFactory("order_dispatch", "pending", dbData);
 
         const msgObj = {

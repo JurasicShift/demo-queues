@@ -5,14 +5,15 @@ import { Table } from "sst/node/table";
 const dynamoDb = new DynamoDB.DocumentClient();
 
 export const main: APIGatewayProxyHandler = async (event) => {
-    // const params = {
-    //     TableName: Table.Orders.tableName,
-    //     Item: {
+    const params = {
+        TableName: Table.SocketTable.tableName,
+        Key: {
+            id: event.requestContext.connectionId,
+        }
+    }
 
-    //     }
-    // }
-
-    console.log("hit disconnect with: ", event);
+    const disconnected = await dynamoDb.delete(params).promise();
+    console.log("DISCONNECTED WITH: ", disconnected);
 
     return { statusCode: 200, body: "Disconnected WebSock" }
 }

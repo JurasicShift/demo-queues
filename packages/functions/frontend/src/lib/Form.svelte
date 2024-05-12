@@ -2,10 +2,7 @@
 	import { API, Auth } from "aws-amplify";
 	import { uniqueOrderRef } from "../helpers";
 	import type { FormDBDocType } from "../../types";
-	import {
-		NoticeStore,
-		LoggedInStore,
-	} from "../stores/noticeStore";
+	import { LoggedInStore } from "../stores/noticeStore";
 	import Spinner from "./Spinner.svelte";
 	import Button from "./Button.svelte";
 
@@ -45,18 +42,16 @@
 			);
 
 			if (response.statusCode === 200) {
-				NoticeStore.set(response);
 				spinActive = !spinActive;
 				clearInputs();
 			}
-			console.log("response: ", response);
+			console.log("API RESPONSE: ", response);
 		} catch (e: any) {
 			console.error("ERROR: ", e.message);
 		}
 	};
 
 	const handleLogout = async () => {
-		console.log("hit handleout");
 		await Auth.signOut();
 		LoggedInStore.set(false);
 	};
