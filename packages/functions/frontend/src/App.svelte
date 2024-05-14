@@ -41,7 +41,7 @@
 	<MessageModal {showModal}></MessageModal>
 	<Header />
 	{#if $loggedIn}
-		<Form />
+		<Form {socket} />
 	{:else}
 		<Login />
 	{/if}

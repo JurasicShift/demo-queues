@@ -3,10 +3,12 @@
 	import { uniqueOrderRef } from "../helpers";
 	import type { FormDBDocType } from "../../types";
 	import { loggedIn } from "../stores/noticeStore";
+	import { launchSocket } from "../sockets/index";
 	import Spinner from "./Spinner.svelte";
 	import Button from "./Button.svelte";
 
 	let spinActive = false;
+	export let socket;
 
 	const data = {
 		first_name: "",
@@ -28,6 +30,8 @@
 
 	const handleSubmit = async () => {
 		spinActive = !spinActive;
+		if (socket.readyState > 1) launchSocket();
+
 		formData.order_ref = uniqueOrderRef(
 			formData.surname
 		);

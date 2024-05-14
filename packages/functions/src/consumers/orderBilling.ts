@@ -21,7 +21,7 @@ export const main = await handler(tableUrl, async (dbData: DynamoDBDocType) => {
     console.log(log);
 
     if (verified) {
-        socketMessage(socketObjFactory("Bankind Confirmation", dbData.order_ref));
+        socketMessage(socketObjFactory("Banking Confirmation", dbData.order_ref));
         const msgData = await messageObjFactory("order_processing", "pending", dbData);
 
         const msgObj = {
