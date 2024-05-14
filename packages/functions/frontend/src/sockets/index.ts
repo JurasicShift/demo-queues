@@ -1,6 +1,6 @@
 import config from "../config";
 import {
-    NoticesStore,
+    notices,
 } from "../stores/noticeStore";
 
 export function launchSocket() {
@@ -20,7 +20,7 @@ export function launchSocket() {
         socket.onmessage = (event: MessageEvent) => {
 
             const response = JSON.parse(event.data);
-            return NoticesStore.update(store => [
+            notices.update(store => [
                 ...store,
                 response,
             ]);
@@ -44,7 +44,7 @@ export function launchSocket() {
 }
 
 export function closeSocket(socket: WebSocket) {
-    // Use optional chaining to safely access socket methods
+
     if (socket?.readyState === WebSocket.OPEN) {
         socket.close();
     }

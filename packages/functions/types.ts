@@ -39,10 +39,10 @@ export type MsgBody = ErrorBody | DynamoDBDocType;
 export type SocketIdType = {
     id: string
 }
-type NoticeData = {
+export type NoticeData = {
     statusCode: number,
     order_ref: string,
     msg: string
 }
 
-export type NoticeStoreType = NoticeData[] | [];
+

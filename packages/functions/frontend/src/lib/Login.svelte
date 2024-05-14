@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Auth } from "aws-amplify";
 	import Spinner from "./Spinner.svelte";
-	import { LoggedInStore } from "../stores/noticeStore";
+	import { loggedIn } from "../stores/noticeStore";
 	import Button from "./Button.svelte";
 
 	let email = "";
@@ -21,7 +21,7 @@
 				password
 			);
 
-			LoggedInStore.set(true);
+			loggedIn.set(true);
 			spinActive = !spinActive;
 			clearInputs();
 		} catch (e: any) {

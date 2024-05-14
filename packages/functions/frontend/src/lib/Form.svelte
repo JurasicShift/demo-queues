@@ -2,7 +2,7 @@
 	import { API, Auth } from "aws-amplify";
 	import { uniqueOrderRef } from "../helpers";
 	import type { FormDBDocType } from "../../types";
-	import { LoggedInStore } from "../stores/noticeStore";
+	import { loggedIn } from "../stores/noticeStore";
 	import Spinner from "./Spinner.svelte";
 	import Button from "./Button.svelte";
 
@@ -53,7 +53,7 @@
 
 	const handleLogout = async () => {
 		await Auth.signOut();
-		LoggedInStore.set(false);
+		loggedIn.set(false);
 	};
 </script>
 

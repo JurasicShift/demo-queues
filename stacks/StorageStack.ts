@@ -25,7 +25,6 @@ export function StorageStack({ stack }: StackContext) {
   })
 
   const socket = new WebSocketApi(stack, "Api", {
-    // authorizer: "iam",
     defaults: {
       function: {
         bind: [table, socketTable],

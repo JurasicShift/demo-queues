@@ -1,9 +1,9 @@
 <script lang="ts">
 	export let showModal = false;
-	import { NoticesStore } from "../stores/noticeStore";
+	import { notices } from "../stores/noticeStore";
 
 	const handleDelete = (msg: string) => {
-		NoticesStore.update(store =>
+		notices.update(store =>
 			store.filter(notice => notice.msg != msg)
 		);
 	};
@@ -11,7 +11,7 @@
 
 {#if showModal}
 	<div class="modal">
-		{#each $NoticesStore as notice}
+		{#each $notices as notice}
 			{#if notice.statusCode !== 410}
 				<div
 					class="modal__box"
@@ -21,7 +21,10 @@
 						: false}
 				>
 					<div class="modal__box--header">
-						Order_ref: {notice.order_ref}
+						{notice.statusCode === 500
+							? "Error location:"
+							: "Order_ref:"}
+						{notice.order_ref}
 						<div class="modal__box--close">
 							<button
 								on:click={() =>
@@ -37,7 +40,10 @@
 
 					<hr />
 					<div class="modal__box--content">
-						Status: {notice.msg}
+						{notice.statusCode === 500
+							? "Error Message: "
+							: "Status: "}
+						{notice.msg}
 					</div>
 				</div>
 			{/if}

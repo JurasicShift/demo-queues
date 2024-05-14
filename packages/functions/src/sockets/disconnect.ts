@@ -13,7 +13,6 @@ export const main: APIGatewayProxyHandler = async (event) => {
     }
 
     const disconnected = await dynamoDb.delete(params).promise();
-    console.log("DISCONNECTED WITH: ", disconnected);
 
     return { statusCode: 200, body: "Disconnected WebSock" }
 }
