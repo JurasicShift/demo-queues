@@ -57,6 +57,7 @@
 
 	const handleLogout = async () => {
 		await Auth.signOut();
+		socket.close();
 		loggedIn.set(false);
 	};
 </script>

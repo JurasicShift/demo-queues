@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let showModal = false;
 	import { notices } from "../stores/noticeStore";
+	import { fade } from "svelte/transition";
 
 	const handleDelete = (msg: string) => {
 		notices.update(store =>
@@ -10,7 +11,10 @@
 </script>
 
 {#if showModal}
-	<div class="modal">
+	<div
+		class="modal"
+		transition:fade={{ duration: 200 }}
+	>
 		{#each $notices as notice}
 			{#if notice.statusCode !== 410}
 				<div

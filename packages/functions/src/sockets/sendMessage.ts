@@ -21,7 +21,7 @@ export const socketMessage = async (msg: string) => {
         const socketIds = await dynamoDb.scan(socketParams);
 
         const connections: SocketIdType[] = (socketIds.Items || []) as SocketIdType[];
-
+        console.log("CONNECTIONS: ", connections);
         if (connections[0].id) {
             for (const connection of connections) {
                 try {
