@@ -30,6 +30,7 @@ export const main: APIGatewayProxyHandler = async (event) => {
     if (connections.length > 0) {
         for (let connection of connections) {
             await dynamoDb.delete({ TableName, Key: { id: connection.id } }).promise();
+            console.log("BYE BYE: ", connection);
         }
     }
 
