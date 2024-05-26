@@ -4,4 +4,4 @@ export const notices = writable([{ statusCode: 410, msg: "Order Pending", order_
 
 export const loggedIn = writable(false);
 
-
+export const socketState = writable(3);

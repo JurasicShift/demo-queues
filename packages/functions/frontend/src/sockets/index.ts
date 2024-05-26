@@ -1,6 +1,6 @@
 import config from "../config";
 import {
-    notices,
+    notices, socketState
 } from "../stores/noticeStore";
 
 export function launchSocket() {
@@ -9,11 +9,12 @@ export function launchSocket() {
         const socket = new WebSocket(
             config.apiSocket.URL
         );
-
+        socketState.update(state => socket.readyState);
 
         socket.onopen = event => {
             socket.send("test message from client");
-            console.log("SOCKET OPEN: ", event);
+            socketState.update(state => socket.readyState);
+            console.log("SOCKET OPEN: ", socket.readyState);
         };
 
 
@@ -27,7 +28,8 @@ export function launchSocket() {
         };
 
         socket.onclose = event => {
-            console.log("SOCKET CLOSED: ", event);
+            socketState.update(state => socket.readyState);
+            console.log("SOCKET CLOSED: ", socket.readyState);
         };
 
         socket.onerror = event => {
