@@ -7,7 +7,6 @@
 	import {
 		notices,
 		loggedIn,
-		socketState,
 	} from "./stores/noticeStore";
 	import Login from "./lib/Login.svelte";
 	import {
@@ -27,12 +26,7 @@
 		}
 	);
 
-	const unsubscribeSocket = socketState.subscribe(
-		state => console.log(state)
-	);
-
 	onDestroy(unsubscribe);
-	onDestroy(unsubscribeSocket);
 
 	let socket: WebSocket | null = null;
 
