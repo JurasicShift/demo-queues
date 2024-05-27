@@ -10,10 +10,12 @@
 		"remove": "sst remove",
 		"console": "sst console",
 		"typecheck": "tsc --noEmit",
-		"test": "sst bind vitest run"
+		"test": "sst bind vitest run",
+		"coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
 		"@tsconfig/node18": "^18.2.4",
+		"@vitest/coverage-v8": "^1.6.0",
 		"aws-cdk-lib": "2.132.1",
 		"constructs": "10.3.0",
 		"sst": "^2.41.4",
