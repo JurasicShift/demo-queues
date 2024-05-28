@@ -1,10 +1,11 @@
-import { it, describe, beforeAll } from "vitest";
+
+import { beforeAll } from "vitest";
 import { initProject } from "sst/project.js";
 import { App, getStack } from "sst/constructs";
 import { StorageStack } from "../../../stacks/StorageStack";
 import { Template } from "aws-cdk-lib/assertions";
 
-let app, template;
+let app, template: Template;
 
 beforeAll(async () => {
     await initProject({});
@@ -75,6 +76,8 @@ describe("Test StorageStack", () => {
 
         });
     })
+
+
     it('should define the WebSocket $connect route', () => {
         template.hasResourceProperties('AWS::ApiGatewayV2::Route', {
             RouteKey: '$connect',

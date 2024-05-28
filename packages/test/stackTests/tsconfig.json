@@ -3,6 +3,8 @@
 	"exclude": ["packages"],
 	"compilerOptions": {
 		"module": "esnext",
-		"moduleResolution": "node"
-	}
+		"moduleResolution": "node",
+		"types": ["vitest/globals", "@types/node"]
+	},
+	"include": ["**/*.test.ts"]
 }
